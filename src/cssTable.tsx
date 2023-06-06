@@ -1,6 +1,19 @@
-const CssTable = () => {
+import { Button } from "react-bootstrap";
+
+type CssTableProps = {
+  insertInCss: (text: string, place: "cursor" | "top" | "bottom") => void;
+};
+
+const CssTable = (props: CssTableProps) => {
   return (
     <>
+      <Button
+        onClick={() => {
+          props.insertInCss("ほげほげ insertCSS", "top");
+        }}
+      >
+        追加
+      </Button>
       <table className="table">
         <tr>
           <td>長さ</td>

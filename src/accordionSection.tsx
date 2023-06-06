@@ -5,7 +5,13 @@ import CssTable from "./cssTable";
 import JsTable from "./jsTable";
 // import TemplateTable from "./templateTable";
 
-function AccordionSection() {
+type AccordionSectionProps = {
+  insertInHtml: (text: string, place: "cursor" | "top" | "bottom") => void;
+  insertInCss: (text: string, place: "cursor" | "top" | "bottom") => void;
+  insertInJs: (text: string, place: "cursor" | "top" | "bottom") => void;
+};
+
+function AccordionSection(props: AccordionSectionProps) {
   return (
     <Accordion defaultActiveKey="0">
       <Accordion.Item eventKey="0">
@@ -15,7 +21,7 @@ function AccordionSection() {
       <Accordion.Item eventKey="1">
         <Accordion.Header>見た目</Accordion.Header>
         <Accordion.Body>
-          <CssTable />
+          <CssTable insertInCss={props.insertInCss} />
         </Accordion.Body>
       </Accordion.Item>
       <Accordion.Item eventKey="2">

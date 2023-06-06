@@ -1,7 +1,7 @@
 import Editor from "@monaco-editor/react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import {
   htmlDefaultValue,
   cssDefaultValue,
@@ -17,6 +17,8 @@ function App() {
   const [jsText, setJsText] = useState("");
 
   const [htmlEditor, setHtmlEditor] = useState<any>();
+  const [cssEditor, setCssEditor] = useState<any>();
+  const [jsEditor, setJsEditor] = useState<any>();
 
   const reflectToIframe = () => {
     const bodyEndTagIndex = htmlText.indexOf("</body>");
@@ -50,9 +52,15 @@ function App() {
   };
 
   const handleHtmlEditorDidMount = (editor: any, monaco: any) => {
-    console.log("onMount: the editor instance:", editor);
-    console.log("onMount: the monaco instance:", monaco);
     setHtmlEditor(editor);
+  };
+
+  const handleCssEditorDidMount = (editor: any, monaco: any) => {
+    setCssEditor(editor);
+  };
+
+  const handleJsEditorDidMount = (editor: any, monaco: any) => {
+    setJsEditor(editor);
   };
 
   const insertInHtml = (
@@ -86,20 +94,82 @@ function App() {
     ]);
   };
 
+  const insertInCss = (
+    text: string,
+    place: "cursor" | "top" | "bottom"
+  ): void => {
+    console.log("cssEditor", cssEditor);
+    let range;
+    const selection = cssEditor.getSelection();
+    if (!selection) return;
+    if (place === "cursor") {
+      range = selection;
+    }
+    if (place === "top") {
+      range = new monaco.Range(1, 1, 1, 1);
+    }
+    if (place === "bottom") {
+      range = new monaco.Range(
+        (cssEditor.getModel()?.getLineCount() ?? 0) + 1,
+        1,
+        (cssEditor.getModel()?.getLineCount() ?? 0) + 1,
+        1
+      );
+    } else {
+      return;
+    }
+    cssEditor.executeEdits("", [
+      {
+        forceMoveMarkers: true,
+        range: range,
+        text: text + "\n",
+      },
+    ]);
+  };
+
+  const insertInJs = (
+    text: string,
+    place: "cursor" | "top" | "bottom"
+  ): void => {
+    let range;
+    const selection = jsEditor.getSelection();
+    if (!selection) return;
+    if (place === "cursor") {
+      range = selection;
+    }
+    if (place === "top") {
+      range = new monaco.Range(1, 1, 1, 1);
+    }
+    if (place === "bottom") {
+      range = new monaco.Range(
+        (jsEditor.getModel()?.getLineCount() ?? 0) + 1,
+        1,
+        (jsEditor.getModel()?.getLineCount() ?? 0) + 1,
+        1
+      );
+    } else {
+      return;
+    }
+    jsEditor.executeEdits("", [
+      {
+        forceMoveMarkers: true,
+        range: range,
+        text: text + "\n",
+      },
+    ]);
+  };
+
   // 入力時に onChange が発火しないのでなんとかしたい
 
   return (
     <Row>
       <Col>
         <h2 className="mx-3">オリジナルアプリを作ろう！</h2>
-        <Button
-          onClick={() => {
-            insertInHtml(`<body><p>ほげほげ</p></body>`, "cursor");
-          }}
-        >
-          追加
-        </Button>
-        <AccordionSection />
+        <AccordionSection
+          insertInHtml={insertInHtml}
+          insertInCss={insertInCss}
+          insertInJs={insertInJs}
+        />
       </Col>
       <Col>
         <Editor
@@ -114,12 +184,14 @@ function App() {
           defaultLanguage="css"
           defaultValue={cssDefaultValue}
           onChange={handleCssEditorChange}
+          onMount={handleCssEditorDidMount}
         />
         <Editor
           height="30vh"
           defaultLanguage="javascript"
           defaultValue={jsDefaultValue}
           onChange={handleJsEditorChange}
+          onMount={handleJsEditorDidMount}
         />
       </Col>
       <Col>
