@@ -34,17 +34,17 @@ function App() {
     setIframeText(newHtmlText);
   };
 
-  const handleHtmlEditorChange = (value: any, event: any) => {
+  const handleHtmlEditorChange = (value: any) => {
     setHtmlText(value);
     reflectToIframe();
   };
 
-  const handleCssEditorChange = (value: any, event: any) => {
+  const handleCssEditorChange = (value: any) => {
     setCssText(value);
     reflectToIframe();
   };
 
-  const handleJsEditorChange = (value: any, event: any) => {
+  const handleJsEditorChange = (value: any) => {
     setJsText(value);
     reflectToIframe();
   };
